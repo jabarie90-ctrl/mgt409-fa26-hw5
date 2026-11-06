@@ -36,6 +36,16 @@ function money(n: number): string {
   return n.toLocaleString("en-US", { style: "currency", currency: "USD" });
 }
 
+function agentSummary(rows: EventRow[]): string {
+  const done = [...rows].reverse().find((row) => row.kind === "HANDOFF_RESULT" || row.kind === "RUN_END");
+  if (done) {
+    return clip(done.result || done.verdict || done.task);
+  }
+  const tools = [...new Set(rows.filter((row) => row.kind === "TOOL" && row.tool).map((row) => row.tool))];
+  if (tools.length) return `Used ${tools.join(", ")}`;
+  return "";
+}
+
 export default function App() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [picked, setPicked] = useState<number | null>(() => {
@@ -166,6 +176,17 @@ export default function App() {
 
         <section className="radio">
           <h2>Agent radio</h2>
+          <div className="shift">
+            {AGENTS.map((agent) => {
+              const rows = ticketEvents.filter((row) => agentOf(row) === agent.id);
+              const summary = agentSummary(rows);
+              return (
+                <p key={`sum-${agent.id}`}>
+                  <strong>{agent.label}.</strong> {summary || "Did not work this ticket."}
+                </p>
+              );
+            })}
+          </div>
           <div className="lanes">
             {AGENTS.map((agent) => {
               const rows = ticketEvents.filter((row) => agentOf(row) === agent.id);

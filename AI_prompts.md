@@ -62,7 +62,7 @@ Created at the start of Homework 5. Each of Problems 2–11 has its own section 
 
 **What was lacking after the first prompt:** (none yet)
 
-**Evidence this was its own step:** `output/desk_tickets.html` Expected sections are filled. Actual / Cash / Reflection wait for the live run.
+**Evidence this was its own step:** `output/desk_tickets.html` Expected sections were filled before the live run. Actual, Cash, and Reflection were added after Problem 9 / 10.
 
 ---
 

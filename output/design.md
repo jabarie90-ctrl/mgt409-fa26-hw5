@@ -22,7 +22,7 @@ Each lane has its own stripe so you can scan who is talking without reading the 
 - Facilities — brick
 - Customer Service — note-paper cream
 
-Handoffs render as a ticket passing from one lane to the next. Tool results stay in the caller’s lane.
+Handoffs render as a ticket passing from one lane to the next. Tool results stay in the caller’s lane. Above the lanes, a shift summary gives one line per agent for that ticket — including “Did not work this ticket” so you can see Facilities stay off a merch ticket.
 
 ## Resolved tickets and cash
 
@@ -31,5 +31,6 @@ A resolved ticket keeps its body text but the stamp covers the status chip so yo
 ## Creative choices
 
 - Paper ticket texture and a navy “after hours” background, because this is a Broadway merch counter, not a SaaS settings page.
+- A shift-summary strip above the radio so you can read what each agent did without scanning every tool line.
 - A visible human stamp for money. The whole point of the shop rules is that agents cannot move cash; the UI should make that feel physical.
 - Shop-today in the till header so overdue math stays tied to 2026-08-31.

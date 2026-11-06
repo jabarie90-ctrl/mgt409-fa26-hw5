@@ -117,6 +117,15 @@
 .run:disabled { opacity: 0.55; cursor: wait; }
 .verdict, .notes { font-size: 0.88rem; color: #d7c9a4; }
 
+.shift {
+  background: #0f1a2e;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  border: 1px dashed #c9a22766;
+}
+.shift p { margin: 0 0 6px; font-size: 0.86rem; color: #e8d9b4; }
+.shift p:last-child { margin-bottom: 0; }
+
 .lanes { display: flex; flex-direction: column; gap: 8px; }
 .lane {
   padding: 8px 10px;
