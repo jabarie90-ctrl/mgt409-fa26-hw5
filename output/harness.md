@@ -58,6 +58,8 @@ Fields: `id`, `kind`, `ref_id`, `amount`, `account`, `paid_at`, `approved_by`.
 
 Empty until a human approves a pay. Staged rows sit with empty `approved_by` until FastAPI `POST /approve-pay`. That is the audit of money leaving checking.
 
+P4 smoke (`output/mcp_smoke.json`) was captured on a fresh working copy, identical to `data/campus_customs.db` (S tee qty **0**, lease **$2,400** due **2026-09-02**, hoodie **22 / 58**). After Problem 9 the working copy has S qty **104** and checking **$160**. Those three smoke outputs still match the original file.
+
 ## MCP tools (Problem 3)
 
 - `get_sku_stock` — table `inventory` — ticket **101**. Tauhid asked for `CC-TEE-WHITE` size S. This tool is the one that returns qty **0**, so the desk knows the tee is not on Aisle B and a reprint has to be considered.

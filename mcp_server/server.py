@@ -5,6 +5,7 @@ Talks only to data/campus_customs_new.db. Does not invent rows.
 from __future__ import annotations
 
 import sqlite3
+from datetime import datetime
 from pathlib import Path
 
 from fastmcp import FastMCP
@@ -263,6 +264,7 @@ def apply_approved_payment(payment_id: int, approved_by: str) -> dict:
     desk = get_desk()
     today = desk.get("date_today")
     new_balance = round(balance - amount, 2)
+    lease = _one("SELECT id, next_due FROM leases WHERE id = ?", (pay["ref_id"],)) if pay["kind"] == "rent" else None
     with _connect() as conn:
         conn.execute(
             "UPDATE cash_accounts SET balance = ?, date = ? WHERE name = 'checking'",
@@ -276,6 +278,16 @@ def apply_approved_payment(payment_id: int, approved_by: str) -> dict:
             conn.execute(
                 "UPDATE invoices SET status = 'paid' WHERE id = ?",
                 (pay["ref_id"],),
+            )
+        if pay["kind"] == "rent" and lease and lease.get("next_due"):
+            due = datetime.strptime(str(lease["next_due"])[:10], "%Y-%m-%d")
+            if due.month == 12:
+                nxt = due.replace(year=due.year + 1, month=1)
+            else:
+                nxt = due.replace(month=due.month + 1)
+            conn.execute(
+                "UPDATE leases SET next_due = ? WHERE id = ?",
+                (nxt.strftime("%Y-%m-%d"), pay["ref_id"]),
             )
         conn.commit()
     return {
