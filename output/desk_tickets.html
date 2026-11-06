@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Campus Customs — desk tickets</title>
+  <style>
+    :root {
+      --ink: #1b140c;
+      --paper: #f4ead6;
+      --navy: #1a2744;
+      --brass: #b58a2b;
+      --stamp: #8c1d18;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Iowan Old Style", Palatino, Georgia, serif;
+      background: var(--navy);
+      color: var(--ink);
+    }
+    header {
+      padding: 28px 32px 12px;
+      color: #f4ead6;
+    }
+    header p { margin: 6px 0 0; opacity: 0.85; }
+    nav {
+      display: flex;
+      gap: 8px;
+      padding: 0 32px 16px;
+      flex-wrap: wrap;
+    }
+    nav button {
+      background: #0f1a2e;
+      color: #f4ead6;
+      border: 1px solid var(--brass);
+      padding: 8px 14px;
+      cursor: pointer;
+      font: inherit;
+    }
+    nav button.on { background: var(--brass); color: var(--navy); }
+    .panel {
+      display: none;
+      margin: 0 32px 40px;
+      background: var(--paper);
+      padding: 28px 32px;
+      min-height: 420px;
+    }
+    .panel.on { display: block; }
+    h2 { margin-top: 0; }
+    h3 { color: var(--stamp); }
+    .meta { font-size: 0.95rem; color: #4a3b28; }
+    .box {
+      border: 1px dashed #8a7350;
+      padding: 12px 16px;
+      margin: 12px 0;
+      background: #fff8ea;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Chapel Street desk — tickets 101 / 102 / 103</h1>
+    <p>Shop today is 2026-08-31. Checking starts at $3,400. Expected is the plan. Actual gets filled after the run.</p>
+  </header>
+  <nav>
+    <button class="on" data-tab="t101">Ticket 101</button>
+    <button data-tab="t102">Ticket 102</button>
+    <button data-tab="t103">Ticket 103</button>
+    <button data-tab="cash">Cash</button>
+    <button data-tab="reflection">Reflection</button>
+  </nav>
+
+  <section id="t101" class="panel on">
+    <h2>Ticket 101 — Tauhid Zaman, CC-TEE-WHITE S</h2>
+    <p class="meta">customer_order · qty 1 · invoice 501 · shelf S is 0</p>
+    <h3>Expected</h3>
+    <div class="box">
+      <p><strong>Boss first call:</strong> Inventory. The question is whether size S is on Aisle B, not whether we like the customer.</p>
+      <p><strong>Handoffs (not everyone):</strong></p>
+      <ol>
+        <li>Boss → Inventory: check `CC-TEE-WHITE` S. Inventory finds qty 0, then `vendor_can_ship` on vendor 1. Invoice 501 is still open, so Bulldog will not reprint yet.</li>
+        <li>Inventory back to Boss. Boss → Accounting: stage invoice 501 at $840. Accounting `prepare_payment` kind=invoice, ref_id=501. Human has to approve. Ticket stays waiting_approval.</li>
+        <li>After the human stamps the pay: Boss → Inventory again. `vendor_can_ship` should now be true. Receive 105 S tees (840 / $8 unit cost), `pick_stock` 1 for Tauhid.</li>
+        <li>Boss → Customer Service last: draft a hold note. Do not email Tauhid. Boss `update_ticket` resolved.</li>
+      </ol>
+      <p><strong>MCP tools this run should touch:</strong> get_desk, get_cash, get_ticket, get_sku_stock, get_invoice, get_vendor, vendor_can_ship, prepare_payment, pending_payments, receive_stock, pick_stock, get_sku_pricing (to confirm $8), update_ticket.</p>
+      <p>Facilities stays off this ticket. It is a tee, not the lease.</p>
+    </div>
+    <h3>Actual</h3>
+    <div class="box" id="actual-101">
+      <p><strong>Who ran:</strong> Boss, Inventory, Accounting, Customer Service. Facilities stayed quiet — that matches the plan.</p>
+      <p><strong>Handoffs:</strong> Boss → Inventory first (S qty 0, invoice 501 blocking Bulldog). Inventory → Accounting to stage the $840. Boss also asked Accounting to verify payment_id 1. Human (Jabarie) stamped approve. Second run: Boss → Accounting (invoice already paid) → Inventory (receive 105, pick 1) → Customer Service (pickup draft). Boss <code>update_ticket</code> resolved.</p>
+      <p><strong>Tools:</strong> get_ticket, get_sku_stock, list_inventory_for_sku, get_invoice, get_vendor, vendor_can_ship, get_desk, get_cash, prepare_payment, pending_payments, receive_stock, pick_stock, update_ticket.</p>
+      <p>Vs Expected: first call was Inventory, not everyone, Facilities off the ticket. Extra Accounting check on the second run because the Boss wanted confirmation the invoice was paid before receiving stock. That is tighter than the plan, not a “call everyone.”</p>
+    </div>
+  </section>
+
+  <section id="t102" class="panel">
+    <h2>Ticket 102 — Elm City Properties, rent</h2>
+    <p class="meta">rent_notice · lease 1 · $2,400 due 2026-09-02</p>
+    <h3>Expected</h3>
+    <div class="box">
+      <p><strong>Boss first call:</strong> Facilities. This is a landlord notice, not a merch pick.</p>
+      <p><strong>Handoffs (not everyone):</strong></p>
+      <ol>
+        <li>Boss → Facilities: `get_lease` 1. Chapel Street shop, $2,400, next_due 2026-09-02 (two days from shop today).</li>
+        <li>Facilities → Accounting (or Boss sends Accounting next): `prepare_payment` kind=rent, ref_id=1, amount=2400. Human has to approve. After invoice 501 is already paid, checking should still cover rent (2560 − 2400 = 160).</li>
+        <li>After the stamp: Boss marks the ticket resolved. Customer Service does not email the landlord from this desk.</li>
+      </ol>
+      <p><strong>MCP tools:</strong> get_desk, get_cash, get_ticket, get_lease, prepare_payment, pending_payments, update_ticket.</p>
+      <p>Inventory stays off this ticket. No SKU on the row.</p>
+    </div>
+    <h3>Actual</h3>
+    <div class="box" id="actual-102">
+      <p><strong>Who ran:</strong> Boss, Facilities, Accounting. Inventory and Customer Service stayed quiet.</p>
+      <p><strong>Handoffs:</strong> Boss → Facilities first (<code>get_lease</code> 1, $2,400 due 2026-09-02). Facilities → Accounting, which staged payment_id 2 kind=rent. Human (Jabarie) stamped it; checking went 2560 → 160. Close run: Facilities confirmed the lease, Boss <code>list_payments</code> saw rent already paid by Jabarie on 2026-08-31, then resolved. Did not email Elm City Properties.</p>
+      <p><strong>Tools:</strong> get_lease, get_desk, get_ticket, get_cash, prepare_payment, pending_payments, list_payments, update_ticket.</p>
+      <p>Vs Expected: first call was Facilities, then Accounting, no Inventory. The close run had to look at the payments ledger because checking was already $160 — otherwise Accounting tried to treat that as a new shortfall. That is why <code>list_payments</code> exists.</p>
+    </div>
+  </section>
+
+  <section id="t103" class="panel">
+    <h2>Ticket 103 — Yale AI Club, 20 navy hoodies M</h2>
+    <p class="meta">price_override · CC-HOOD-NAVY M · want 20 · on-hand 8 · cost 22 / list 58</p>
+    <h3>Expected</h3>
+    <div class="box">
+      <p><strong>Boss first call:</strong> Accounting. The club is asking for a bulk cut. Margin has to clear unit cost before anyone promises 20 units.</p>
+      <p><strong>Handoffs (not everyone):</strong></p>
+      <ol>
+        <li>Boss → Accounting: `get_sku_pricing` CC-HOOD-NAVY. List 58, cost 22. A 10% club cut ($52.20) still covers cost. Giving units away under $22 does not.</li>
+        <li>Boss → Inventory: `get_sku_stock` / `list_inventory_for_sku`. M is 8. Short 12. Restock of 12 × $22 = $264. After 840 + 2400, checking is $160, so the restock is refused. Do not stage a restock pay.</li>
+        <li>Boss → Customer Service: draft that we can sell the 8 on the shelf (list or a small cut above $22) and cannot do 20 this week. Do not email the club. Boss resolves the ticket with no cash change.</li>
+      </ol>
+      <p><strong>MCP tools:</strong> get_desk, get_cash, get_ticket, get_sku_pricing, get_sku_stock, list_inventory_for_sku, update_ticket. prepare_payment should not fire for a $264 restock.</p>
+      <p>Facilities stays off this ticket.</p>
+    </div>
+    <h3>Actual</h3>
+    <div class="box" id="actual-103">
+      <p><strong>Who ran:</strong> Boss, Accounting, Inventory, Customer Service. Facilities stayed quiet.</p>
+      <p><strong>Handoffs:</strong> Boss → Accounting first (list 58, cost 22, 10% = $52.20 still covers cost). Boss → Inventory (M qty 8, short 12). Boss → Accounting again on the $264 restock vs $160 checking — no pay staged. CS drafted the 8-unit offer. Close run resolved the ticket on that offer; no stock moved, no cash moved.</p>
+      <p><strong>Tools:</strong> get_sku_pricing, get_sku_stock, list_inventory_for_sku, get_cash, get_desk, get_ticket, list_payments, update_ticket. <code>prepare_payment</code> did not fire.</p>
+      <p>Vs Expected: Accounting first, then Inventory, then CS. The extra Accounting hop was the restock-cash check, which is the whole point of ticket 103. First run left the ticket open because 20 could not be filled; second run treated the 8-unit offer as a close, which is what the desk should do.</p>
+    </div>
+  </section>
+
+  <section id="cash" class="panel">
+    <h2>Cash</h2>
+    <p>Working file data/campus_customs_new.db after a clean reset, then the three-ticket run. Shop today 2026-08-31. Cash only goes out. A named human (Jabarie) stamped every pay.</p>
+    <div class="box">
+      <p><strong>Starting checking:</strong> $3,400.00</p>
+      <p><strong>Ticket 101:</strong> −$840.00. Invoice 501 to Bulldog Print Co (rush reprint CC-TEE-WHITE S). Staged as payment_id 1, stamped by Jabarie. Checking → $2,560.00. Reprint itself is not a second cash hit; receive_stock only adds units.</p>
+      <p><strong>Ticket 102:</strong> −$2,400.00. Lease 1 rent to Elm City Properties. Staged as payment_id 2, stamped by Jabarie. Checking → $160.00.</p>
+      <p><strong>Ticket 103:</strong> $0.00. 12 × $22 = $264 restock would go negative vs $160, so prepare_payment never ran. Offer the 8 on the shelf.</p>
+      <p><strong>Ending checking:</strong> $160.00. Matches cash_accounts row checking in the working database (3400 − 840 − 2400 = 160).</p>
+    </div>
+  </section>
+
+  <section id="reflection" class="panel">
+    <h2>Reflection</h2>
+    <h3>How the agents did on each ticket</h3>
+    <p><strong>101.</strong> This is the one that needed a human. Inventory found qty 0 and named invoice 501 instead of inventing a tee. Accounting staged $840 and stopped. Cash only moved after I stamped payment_id 1 on the board (Cash tab: 3400 → 2560). After that, Inventory actually received 105 and picked 1 — the 104 left on Aisle B is in the working database. CS put a draft on the ticket and did not email Tauhid. Grade: the desk waited on the stamp, which is the whole shop rule.</p>
+    <p><strong>102.</strong> Facilities first, not Inventory. Accounting staged $2,400 against $2,560, which still fits after 101. After the stamp, checking is $160 (Cash tab). The ugly moment was the close run: Accounting saw $160 and talked like rent had not been paid. Boss only closed it after <code>list_payments</code> showed Jabarie already stamped payment_id 2. Grade: first pass was right; the ledger check had to exist or this ticket would have looked unpaid.</p>
+    <p><strong>103.</strong> Accounting first on 58 / 22, then Inventory on 8 vs 20. They refused the $264 restock against $160 and did not stage a pay. That is the correct money call. They almost left the ticket open because they could not fill 20; the close run treated “offer 8, refuse the restock” as resolved. CS drafted, nobody emailed the club. Grade: the economics were right; the status call needed a second pass.</p>
+
+    <h3>Actual vs Expected, per ticket</h3>
+    <p><strong>101.</strong> Expected Inventory first, then Accounting, human, then receive/pick, then CS. Actual matched. Extra Accounting hop after the stamp was confirmation, not a fourth specialist. Facilities stayed off, as planned.</p>
+    <p><strong>102.</strong> Expected Facilities → Accounting → human stamp → close. Actual matched, plus the ledger reread because cash had already left. Inventory stayed off, as planned.</p>
+    <p><strong>103.</strong> Expected Accounting → Inventory → CS, no restock pay. Actual matched, with a second Accounting hop for the $264 vs $160 math. Facilities stayed off. The only miss vs plan was leaving it open on the first pass.</p>
+
+    <h3>What would have been simpler as one agent</h3>
+    <p>Ticket 102. It is one lease row and one rent pay. A single agent with <code>get_lease</code> + <code>prepare_payment</code> would have staged $2,400 without a Facilities-to-Accounting handoff. The handoff still earned its keep as a role split (space vs cash), but it was the least necessary of the three. 101 is worse as one agent: shelf qty, vendor hold, cash, and a customer draft are four different mistakes waiting to happen. 103 needs both margin math and a shelf count; collapsing those is how you promise 20 hoodies you cannot restock.</p>
+
+    <h3>Three new problems this team could already solve</h3>
+    <ol>
+      <li>Another size of <code>CC-TEE-WHITE</code> goes to 0 while vendor 1 is clean — Inventory <code>get_sku_stock</code> / <code>vendor_can_ship</code>, Accounting stages a reprint against checking, human stamps, <code>receive_stock</code>.</li>
+      <li>A second rent notice on lease 1 next month — Facilities <code>get_lease</code>, Accounting <code>get_cash</code> + <code>prepare_payment</code>. After this run checking is $160, so the tool would refuse a $2,400 pay and the board would show the shortfall instead of going negative.</li>
+      <li>Yale AI Club asks for 8 navy M at 10% off — Inventory already knows qty 8, Accounting already knows $52.20 &gt; $22, CS already has the draft language. No new tools.</li>
+    </ol>
+
+    <h3>Three new problems this team could not solve, and what we would need</h3>
+    <ol>
+      <li><strong>A customer returns the S tee.</strong> Cash only goes out; there is no inbound-cash tool and no return table. We would need a human-approved receive-cash route and a returns agent (or Inventory + Accounting with a <code>restock_from_return</code> tool).</li>
+      <li><strong>Elm City wants next month’s rent plus a CAM charge that is not on the lease row.</strong> <code>get_lease</code> only has <code>monthly_rent</code>. We would need a charges table and a Facilities tool that reads it, plus Accounting that can stage a split pay.</li>
+      <li><strong>Actually email Tauhid or the club.</strong> CS is forbidden from sending. We would need a separate outbound-mail agent with a human “send” stamp, the same way pays work, plus a sent-mail log. The current draft-on-ticket tool is not that.</li>
+    </ol>
+    <p>Evidence for all of the above is on this same page: ticket tabs (Expected vs Actual) and the Cash tab ($3,400 → $840 → $2,400 → $160).</p>
+  </section>
+
+  <script>
+    const buttons = document.querySelectorAll("nav button");
+    const panels = document.querySelectorAll(".panel");
+    buttons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        buttons.forEach((b) => b.classList.remove("on"));
+        panels.forEach((p) => p.classList.remove("on"));
+        btn.classList.add("on");
+        document.getElementById(btn.dataset.tab).classList.add("on");
+      });
+    });
+  </script>
+</body>
+</html>

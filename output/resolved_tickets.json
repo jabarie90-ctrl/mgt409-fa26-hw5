@@ -1,0 +1,63 @@
+{
+  "shop_today": "2026-08-31",
+  "starting_checking": 3400.0,
+  "ending_checking": 160.0,
+  "human": "Jabarie",
+  "tickets": [
+    {
+      "id": 101,
+      "final_status": "resolved",
+      "outcome": "Invoice 501 ($840) was staged, stamped by Jabarie, then Inventory received 105 CC-TEE-WHITE S and picked 1 for Tauhid. CS drafted a pickup note. Nobody emailed him.",
+      "agents": {
+        "boss": "Called Inventory first, then Accounting. After the stamp, sent Inventory to receive/pick and CS to draft, then marked resolved.",
+        "inventory": "S qty 0. vendor_can_ship false on invoice 501. After pay: receive 105, pick 1, 104 left on Aisle B.",
+        "accounting": "Staged prepare_payment kind=invoice ref_id=501 amount=840 (payment_id 1). Did not move cash.",
+        "facilities": "Not used.",
+        "customer_service": "Drafted a hold/pickup note onto the ticket. Did not send email."
+      },
+      "human_approvals": [
+        {
+          "payment_id": 1,
+          "kind": "invoice",
+          "ref_id": 501,
+          "amount": 840.0,
+          "approved_by": "Jabarie"
+        }
+      ]
+    },
+    {
+      "id": 102,
+      "final_status": "resolved",
+      "outcome": "Facilities read lease 1 ($2,400 due 2026-09-02). Accounting staged rent payment_id 2. Jabarie stamped it. Checking fell to $160. Ticket closed on the already-paid ledger row.",
+      "agents": {
+        "boss": "Called Facilities first. After the stamp, list_payments showed rent already paid, so resolved without a second pay.",
+        "inventory": "Not used.",
+        "accounting": "Staged prepare_payment kind=rent ref_id=1 amount=2400 (payment_id 2). Did not move cash.",
+        "facilities": "get_lease 1, handed the $2,400 to Accounting.",
+        "customer_service": "Not used. Landlord mail is not a customer draft."
+      },
+      "human_approvals": [
+        {
+          "payment_id": 2,
+          "kind": "rent",
+          "ref_id": 1,
+          "amount": 2400.0,
+          "approved_by": "Jabarie"
+        }
+      ]
+    },
+    {
+      "id": 103,
+      "final_status": "resolved",
+      "outcome": "10% club cut ($52.20) still covers $22 cost. Only 8 navy M hoodies on the shelf. 12-unit restock is $264 and checking is $160, so no restock pay. Offer the 8. Cash unchanged.",
+      "agents": {
+        "boss": "Called Accounting first, then Inventory, then CS. Closed the ticket on the 8-unit offer.",
+        "inventory": "CC-HOOD-NAVY M qty 8, short 12. Did not pick or receive.",
+        "accounting": "List 58 / cost 22. Restock 12 × 22 = 264 > 160. No prepare_payment.",
+        "facilities": "Not used.",
+        "customer_service": "Drafted that we can do 8 at $52.20 and cannot do 20 this week. Did not email the club."
+      },
+      "human_approvals": []
+    }
+  ]
+}

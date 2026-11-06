@@ -1,0 +1,37 @@
+[
+  {
+    "prompt": "What's on the shelf for CC-TEE-WHITE size S? That's ticket 101.",
+    "tool": "get_sku_stock",
+    "output": {
+      "found": true,
+      "sku": "CC-TEE-WHITE",
+      "name": "Classic Bulldog Tee",
+      "size": "S",
+      "qty": 0,
+      "location": "Aisle B"
+    }
+  },
+  {
+    "prompt": "Pull lease 1 for the rent ticket. What do we owe Elm City Properties and when?",
+    "tool": "get_lease",
+    "output": {
+      "found": true,
+      "id": 1,
+      "space_name": "Chapel Street shop",
+      "landlord": "Elm City Properties",
+      "monthly_rent": 2400.0,
+      "next_due": "2026-09-02",
+      "notes": null
+    }
+  },
+  {
+    "prompt": "What's our cost and list price on CC-HOOD-NAVY for the Yale AI Club bulk ask?",
+    "tool": "get_sku_pricing",
+    "output": {
+      "found": true,
+      "sku": "CC-HOOD-NAVY",
+      "unit_cost": 22.0,
+      "list_price": 58.0
+    }
+  }
+]

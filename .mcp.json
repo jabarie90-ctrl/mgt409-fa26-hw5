@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "campus-customs-desk": {
+      "command": "/Users/yale/Desktop/AI Class/HW5/.venv/bin/python",
+      "args": [
+        "/Users/yale/Desktop/AI Class/HW5/mcp_server/server.py"
+      ]
+    }
+  }
+}
