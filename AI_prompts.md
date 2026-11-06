@@ -112,4 +112,4 @@ Created at the start of Homework 5. Each of Problems 2–11 has its own section 
 
 **What was lacking after the first prompt:** (none yet)
 
-**Evidence this was its own step:** `output/github_url.txt` and the public repo URL.
+**Evidence this was its own step:** `output/github_url.txt` is https://github.com/jabarie90-ctrl/mgt409-fa26-hw5. Public repo, no `.env`.
